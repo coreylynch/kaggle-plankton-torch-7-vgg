@@ -5,6 +5,8 @@
 3. Do preprocessing
 ```
 th -i provider.lua
+```
+```lua
 provider = Provider()
 provider:normalize()
 torch.save('provider.t7',provider)
