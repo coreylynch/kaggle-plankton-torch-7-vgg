@@ -10,7 +10,7 @@ function Provider:__init(full)
   local train_size = torch.floor(total_training_size * 0.8)
   local validation_size = total_training_size - train_size
   local test_size = 130400
-  local resize = 96
+  local resize = 48
 
   local data = torch.Tensor(total_training_size, 1, resize, resize):zero():float()
   local labels = torch.Tensor(total_training_size)
@@ -32,7 +32,7 @@ function Provider:__init(full)
     for f in paths.iterfiles('train/'..d) do
        i = i + 1
        im = image.load('train/'..d..'/'..f)
-       data[rorder[i]] = image.scale(im, resize, resize)
+       data[rorder[i]] = image.scale(im, resize, resize):float()
        labels[rorder[i]] = labels_to_index[d]
     end
   end
