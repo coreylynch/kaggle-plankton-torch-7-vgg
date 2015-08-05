@@ -10,7 +10,7 @@ function Provider:__init(full)
   local train_size = torch.floor(total_training_size * 0.8)
   local validation_size = total_training_size - train_size
   local test_size = 130400
-  local resize = 32
+  local resize = 96
 
   local data = torch.Tensor(total_training_size, 1, resize, resize):zero():float()
   local labels = torch.Tensor(total_training_size)
