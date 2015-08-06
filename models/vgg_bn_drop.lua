@@ -50,15 +50,15 @@ ConvBNReLU(512,512):add(nn.Dropout(0.4))
 ConvBNReLU(512,512):add(nn.Dropout(0.4))
 ConvBNReLU(512,512)
 vgg:add(MaxPooling(2,2,2,2):ceil())
-vgg:add(nn.View(512))
+vgg:add(nn.View(512*2*2))
 
 classifier = nn.Sequential()
 classifier:add(nn.Dropout(0.5))
-classifier:add(nn.Linear(512,512))
-classifier:add(nn.BatchNormalization(512))
+classifier:add(nn.Linear(512*2*2,512*2*2))
+classifier:add(nn.BatchNormalization(512*2*2))
 classifier:add(nn.ReLU(true))
 classifier:add(nn.Dropout(0.5))
-classifier:add(nn.Linear(512,121))
+classifier:add(nn.Linear(512*2*2,121))
 vgg:add(classifier)
 
 -- initialization from MSR
@@ -78,7 +78,7 @@ end
 MSRinit(vgg)
 
 -- check that we can propagate forward without errors
--- should get 16x10 tensor
---print(#vgg:cuda():forward(torch.CudaTensor(16,3,32,32)))
+-- should get 16x121 tensor
+-- print(#vgg:cuda():forward(torch.CudaTensor(16,1,64,64)))
 
 return vgg

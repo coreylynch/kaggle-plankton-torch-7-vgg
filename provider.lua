@@ -2,6 +2,7 @@ require 'nn'
 require 'image'
 require 'xlua'
 require 'paths'
+torch.setdefaulttensortype('torch.FloatTensor')
 
 local Provider = torch.class 'Provider'
 
@@ -10,7 +11,7 @@ function Provider:__init(full)
   local train_size = torch.floor(total_training_size * 0.8)
   local validation_size = total_training_size - train_size
   local test_size = 130400
-  local resize = 48
+  local resize = 64
 
   local data = torch.Tensor(total_training_size, 1, resize, resize):zero():float()
   local labels = torch.Tensor(total_training_size)
@@ -51,29 +52,12 @@ function Provider:__init(full)
      size = function() return (validation_size) end
   }
   local validData = self.validData
-
-  -- Load test data
-  i = 0
-  print("Loading and resizing test")
-  test_data = torch.Tensor(test_size, 1, resize, resize):zero()
-  for file in paths.iterfiles('test/') do
-     xlua.progress(i, test_size)
-     i = i + 1
-     im = image.load('test/'..file)
-     test_data[i] = image.scale(im, resize, resize)
-  end
-
-  self.testData = {
-     data = test_data,
-     size = function() return test_size end
-  }
-  local testData = self.testData
  end
 
 
 function Provider:normalize()
   local trainData = self.trainData
-  local testData = self.testData
+  local validData = self.validData
 
   local mean = trainData.data:select(2,1):mean()
   local std = trainData.data:select(2,1):std()
@@ -82,7 +66,7 @@ function Provider:normalize()
   trainData.mean = mean
   trainData.std = std
 
-  testData.data:select(2,1):add(-mean)
-  testData.data:select(2,1):div(std)
+  validData.data:select(2,1):add(-mean)
+  validData.data:select(2,1):div(std)
 end
 

@@ -129,7 +129,7 @@ function test()
   local bs = 125
   for i=1,n,bs do
     _,y = model:forward(provider.validData.data:narrow(1,i,bs)):max(2)
-    -- confusion:batchAdd(y,provider.validData.labels:narrow(1,i,bs))
+    confusion:batchAdd(y,provider.validData.labels:narrow(1,i,bs))
   end
 
   confusion:updateValids()
